@@ -16,7 +16,7 @@ export class WizardContent {
     substituteParams(text, wizard) {
         return text //substituteParams(text)
             .replace(/{{wizpipe}}/g, wizard.pipe?.toString() ?? '')
-            .replace(/{{wizvar::((?!::|}}).)+(?:::((?!::|}}).)+)?}}/g, (_, key, index)=>{
+            .replace(/{{wizvar::((?:(?!::|}}).)+)(?:::((?:(?!::|}}).)+))?}}/g, (_, key, index)=>{
                 return wizard.variables[key]?.toString() ?? '';
             })
         ;
