@@ -14,6 +14,7 @@ import { WizardTextBox } from './src/content/WizardTextBox.js';
 import { HERO_TEXT_POSITION, WizardHeroText } from './src/WizardHeroText.js';
 import { isFalseBoolean, isTrueBoolean } from '../../../utils.js';
 import { WizardButton } from './src/content/WizardButton.js';
+import { WizardCheckbox } from './src/content/WizardCheckbox.js';
 import { NAV_POSITION, WizardNav } from './src/WizardNav.js';
 import { CRUMBS__POSITION, WizardCrumbs } from './src/WizCrumbs.js';
 import { TRANSITION_TYPE, WizardTransition } from './src/WizardTransition.js';
@@ -690,11 +691,13 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-but
         SlashCommandNamedArgument.fromProps({ name: 'icon',
             description: 'icon to show on the button, look up icons with /pick-icon',
         }),
-        SlashCommandNamedArgument.fromProps({ name: 'label',
+        SlashCommandNamedArgument.fromProps({ name: 'image',
             description: 'image to show on the button',
         }),
         SlashCommandNamedArgument.fromProps({ name: 'small',
             description: 'add "small=" to show a smaller button',
+            typeList: ARGUMENT_TYPE.BOOLEAN,
+            defaultValue: 'false',
         }),
     ],
     unnamedArgumentList: [
@@ -705,6 +708,89 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-but
     ],
     helpString: `
         <div>Adds a clickable button to the page.</div>
+    `,
+}));
+
+SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-checkbox',
+    /**
+     * @param {import('../../../slash-commands/SlashCommand.js').NamedArguments & {
+     *  label:string,
+     *  icon:string,
+     *  image:string,
+     *  value:string,
+     *  small:string,
+     *  var:string,
+     *  group:string,
+     *  checked:string,
+     * }} args
+     * @param {SlashCommandClosure} callback
+     */
+    callback: async(args, callback)=>{
+        const wiz = /**@type {Wizard}*/(args._scope.existsVariable('_STWIZ_') && args._scope.getVariable('_STWIZ_'));
+        const page = /**@type {WizardPage}*/(args._scope.existsVariable('_STWIZ_PAGE_') && args._scope.getVariable('_STWIZ_PAGE_'));
+        if (!page) throw new Error('Cannot call "/wiz-page-checkbox" outside of "/wiz-page"');
+
+        callback?.scope?.letVariable('_STWIZ_PAGE_', page);
+
+        const content = new WizardCheckbox();
+        content.label = args.label;
+        content.group = args.group;
+        content.var = args.var;
+        content.value = args.value ?? args.label;
+        content.checked = isTrueBoolean((args.checked ?? 'false') || 'true');
+        content.icon = args.icon;
+        content.image = args.image;
+        content.isSmall = isTrueBoolean((args.small ?? 'false') || 'true');
+
+        if (content.var !== undefined) wiz.setVariable(content.var, JSON.stringify(content.checked));
+        if (content.group !== undefined) {
+            let group = [];
+            try { group = JSON.parse(wiz.getVariable(content.group)); } catch { /* not JSON */ }
+            if (content.checked) {
+                const val = content.value ?? content.label;
+                if (!group.includes(val)) group.push(val);
+            }
+            wiz.setVariable(content.group, JSON.stringify(group));
+        }
+
+        page.contentList.push(content);
+
+        return '';
+    },
+    namedArgumentList: [
+        SlashCommandNamedArgument.fromProps({ name: 'label',
+            description: 'label text to show on the checkbox',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'icon',
+            description: 'icon to show on the checkbox, look up icons with /pick-icon',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'image',
+            description: 'image to show on the checkbox',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'small',
+            description: 'add "small=" to show a smaller checkbox',
+            typeList: ARGUMENT_TYPE.BOOLEAN,
+            defaultValue: 'false',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'var',
+            description: 'variable to assign checked state to - {{wizvar::...}} = true|false',
+            typeList: ARGUMENT_TYPE.VARIABLE_NAME,
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'group',
+            description: 'list variable to add the checkbox value to if checked - {{wizvar:...}} = ["a", "b", ...]',
+            typeList: ARGUMENT_TYPE.VARIABLE_NAME,
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'value',
+            description: 'value to add to the group= list if checked, uses label= if not set',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'checked',
+            description: 'add "checked=" to start the checkbox already checked',
+            typeList: ARGUMENT_TYPE.BOOLEAN,
+            defaultValue: 'false',
+        }),
+    ],
+    helpString: `
+        <div>Adds a checkbox to the page.</div>
     `,
 }));
 
