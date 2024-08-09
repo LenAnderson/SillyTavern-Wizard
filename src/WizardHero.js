@@ -29,6 +29,7 @@ export class WizardHero {
     /**@type {string} */ image;
     /**@type {string} */ color;
     /**@type {WizardHeroText} */ text;
+    /**@type {string[]} */ classList = [];
 
 
     // DOM
@@ -46,6 +47,7 @@ export class WizardHero {
             image: this.image,
             color: this.color,
             text: this.text?.toJSON(),
+            classList: this.classList,
         };
     }
 
@@ -57,6 +59,7 @@ export class WizardHero {
             const root = document.createElement('div'); {
                 this.dom.root = root;
                 root.classList.add('stwiz--hero');
+                for (const c of this.classList) root.classList.add(c);
                 root.dataset.stwizLayout = this.layout;
                 root.dataset.stwizPosition = this.position;
                 root.style.setProperty('--size', this.size.toString());

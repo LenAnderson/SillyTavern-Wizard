@@ -14,6 +14,7 @@ export class WizardPage {
     /**@type {WizardNav} */ nav;
     /**@type {WizardTransition} */ transition;
     /**@type {WizardCrumbs} */ crumbs;
+    /**@type {string[]} */ classList = [];
 
     /**@type {WizardContent[]} */ contentList = [];
 
@@ -42,6 +43,7 @@ export class WizardPage {
             const root = document.createElement('div'); {
                 this.dom.root = root;
                 root.classList.add('stwiz--pageContainer');
+                for (const c of this.classList) root.classList.add(c);
                 root.dataset.stwizId = this.id;
                 if (this.hero) {
                     root.dataset.stwizLayout = this.hero.layout;
