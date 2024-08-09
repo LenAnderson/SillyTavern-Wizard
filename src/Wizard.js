@@ -262,6 +262,7 @@ export class Wizard {
                 this.historyList.push(this.currentPage);
             }
         }
+        await page.contentClosure?.execute();
         if (page.before) {
             await page.before.execute();
         }
