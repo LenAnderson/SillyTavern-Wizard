@@ -23,6 +23,7 @@ All features are optional and can be enabled / disabled / configured to your lik
 - Background blur (behind the Wizard)
 - Background image (behind the Wizard)
 - Wizard-scoped variables
+- Non-linear Wizard (jump directly to other pages)
 - Page transitions (non, fade, slide, flip)
 - Navigation buttons (back, forward, close)
 	- Optional default for all pages
