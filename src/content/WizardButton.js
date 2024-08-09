@@ -40,7 +40,13 @@ export class WizardButton extends WizardContent {
                     if (this.image) {
                         const img = document.createElement('img'); {
                             img.classList.add('stwiz--img');
+                            const prom = new Promise(resolve=>{
+                                if (img.complete) return resolve();
+                                img.addEventListener('load', resolve, { once:true });
+                                img.addEventListener('error', resolve, { once:true });
+                            });
                             img.src = this.image;
+                            await prom;
                             lbl.append(img);
                         }
                     }
