@@ -4,10 +4,10 @@ Shows a Wizard to guide the user step-by-step through a list of pages.
 
 | | | |
 |-|-|-|
-|![](./README/wiz-01.jpg)|![](./README/wiz-02.jpg)|![](./README/wiz-03.jpg)|
-|![](./README/wiz-04.jpg)|![](./README/wiz-05.jpg)|![](./README/wiz-06.jpg)|
-|![](./README/wiz-07.jpg)|![](./README/wiz-08.jpg)|![](./README/wiz-09.jpg)|
-|![](./README/wiz-10.jpg)|![](./README/wiz-11.jpg)| |
+|![](./README/wiz-20.jpg)|![](./README/wiz-21.jpg)|![](./README/wiz-22.jpg)|
+|![](./README/wiz-23.jpg)|![](./README/wiz-24.jpg)|![](./README/wiz-25.jpg)|
+|![](./README/wiz-26.jpg)|![](./README/wiz-27.jpg)|![](./README/wiz-28.jpg)|
+|![](./README/wiz-29.jpg)|![](./README/wiz-30.jpg)| |
 
 
 ```stscript
