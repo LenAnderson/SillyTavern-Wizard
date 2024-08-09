@@ -134,13 +134,13 @@ export class Wizard {
 
     async start() {
         this.isActive = true;
+        this.promise = new Promise(resolve=>this.resolve = resolve);
         const dom = await this.render();
         if (this.before) {
             this.before.scope.setVariable('_STWIZ_', this);
             await this.before.execute();
         }
         await this.next();
-        this.promise = new Promise(resolve=>this.resolve = resolve);
         const result = await this.promise;
         this.isActive = false;
         dom.close();
@@ -199,7 +199,6 @@ export class Wizard {
     }
 
     async stop(result = null) {
-        if (!this.isActive) return;
         this.resolve(result ?? this.pipe ?? '');
     }
 
@@ -233,7 +232,10 @@ export class Wizard {
                 if (this.backgroundColor) root.style.backgroundColor = this.backgroundColor;
                 root.style.setProperty('--blur', this.blur.toString());
                 root.addEventListener('keydown', (evt)=>{
-                    if (evt.key == 'Escape') this.stop();
+                    if (evt.key == 'Escape') {
+                        evt.stopPropagation();
+                        this.stop();
+                    }
                 });
                 document.body.append(root);
                 root.showModal();
