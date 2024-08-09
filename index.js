@@ -16,6 +16,7 @@ import { isFalseBoolean, isTrueBoolean } from '../../../utils.js';
 import { WizardButton } from './src/content/WizardButton.js';
 import { NAV_POSITION, WizardNav } from './src/WizardNav.js';
 import { CRUMBS__POSITION, WizardCrumbs } from './src/WizCrumbs.js';
+import { TRANSITION_TYPE, WizardTransition } from './src/WizardTransition.js';
 
 // wizard UI
 //x handle Escape closing modal
@@ -186,6 +187,7 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page',
         }
         page.hero = WizardHero.from(wiz.hero?.toJSON());
         page.nav = WizardNav.from(wiz.nav?.toJSON());
+        page.transition = WizardTransition.from(wiz.transition?.toJSON());
         page.crumbs = WizardCrumbs.from(wiz.crumbs?.toJSON());
 
         args._scope.variables['_STWIZ_PAGE_'] = page;
@@ -212,6 +214,55 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page',
     helpString: `
         <div>Adds a page to the Wizard.</div>
         <div>Use <code>/wiz-page-...</code> commands to define the contents.</div>
+    `,
+}));
+
+SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-transition',
+    aliases: ['wiz-page-transition'],
+    /**
+     * @param {import('../../../slash-commands/SlashCommand.js').NamedArguments & {
+     *  type:string,
+     *  time:string,
+     *  clear:string,
+     * }} args
+     * @param {SlashCommandClosure} contentClosure
+     */
+    callback: async(args, contentClosure)=>{
+        const wiz = /**@type {Wizard}*/(args._scope.existsVariable('_STWIZ_') && args._scope.getVariable('_STWIZ_'));
+        const page = /**@type {WizardPage}*/(args._scope.existsVariable('_STWIZ_PAGE_') && args._scope.getVariable('_STWIZ_PAGE_'));
+        if (!page && !wiz) throw new Error('Cannot call "/wiz-transition" outside of "/wiz-page" or "/wizard"');
+
+        if (args.clear != undefined) {
+            (page ?? wiz).transition = null;
+            return '';
+        }
+
+        const transition = new WizardTransition();
+        transition.type = Object.values(TRANSITION_TYPE).find(it=>it == args.type) ?? page?.transition?.type ?? wiz.transition?.type ?? transition.type;
+        transition.time = Number(args.time ?? page?.transition?.time ?? wiz.transition?.time ?? transition.time);
+
+        (page ?? wiz).transition = transition;
+
+        return '';
+    },
+    namedArgumentList: [
+        SlashCommandNamedArgument.fromProps({ name: 'type',
+            description: 'the type of transition to apply',
+            enumList: Object.values(TRANSITION_TYPE),
+            defaultValue: TRANSITION_TYPE.FADE,
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'time',
+            description: 'duration of the transition animation in milliseconds',
+            typeList: ARGUMENT_TYPE.NUMBER,
+            defaultValue: '400',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'clear',
+            description: 'add "clear=" to remove a transition from a page when a default was set on the Wizard',
+        }),
+    ],
+    helpString: `
+        <div>Sets a transition to be used between pages.</div>
+        <div>Call this command directly in the Wizard to set a default transition for all pages. Defaults can be selectively overwritten by each page.</div>
     `,
 }));
 

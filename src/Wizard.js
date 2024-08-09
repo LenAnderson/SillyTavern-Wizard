@@ -6,6 +6,7 @@ import { waitForFrame } from './lib/wait.js';
 import { WizardHero } from './WizardHero.js';
 import { WizardNav } from './WizardNav.js';
 import { WizardPage } from './WizardPage.js';
+import { WizardTransition } from './WizardTransition.js';
 import { WizardCrumbs } from './WizCrumbs.js';
 
 /** @enum {string?} */
@@ -33,6 +34,7 @@ export class Wizard {
     // page defaults
     /**@type {WizardHero} */ hero;
     /**@type {WizardNav} */ nav;
+    /**@type {WizardTransition} */ transition = new WizardTransition();
     /**@type {WizardCrumbs} */ crumbs;
 
 
@@ -265,27 +267,29 @@ export class Wizard {
         }
         const n = await page.render(this);
         n.classList.add('stwiz--busy');
-        //TODO check if animation is set
-        //TODO adjust timing based on anim type
-        if (true) { //in-parallel
-            n.classList.add(isBack ? 'stwiz--exit' : 'stwiz--enter');
-            this.dom.root.append(n);
-            await waitForFrame();
-            n.classList.remove(isBack ? 'stwiz--exit' : 'stwiz--enter');
-            o?.classList?.add(isBack ? 'stwiz--enter' : 'stwiz--exit');
-            await delay(410);
-            o?.remove();
-            this.dom.page = n;
-        } else if (true) { // in-series
-            n.classList.add(isBack ? 'stwiz--exit' : 'stwiz--enter');
-            this.dom.root.append(n);
-            await waitForFrame();
-            o?.classList?.add(isBack ? 'stwiz--enter' : 'stwiz--exit');
-            await delay(200);
-            n.classList.remove(isBack ? 'stwiz--exit' : 'stwiz--enter');
-            await delay(210);
-            o?.remove();
-            this.dom.page = n;
+        this.dom.root.dataset.stwizTransition = page.transition?.type ?? '';
+        this.dom.root.style.setProperty('--transition', page.transition?.time?.toString() ?? '0');
+        if (page.transition) {
+            if (page.transition.isParallel) { //in-parallel
+                n.classList.add(isBack ? 'stwiz--exit' : 'stwiz--enter');
+                this.dom.root.append(n);
+                await waitForFrame();
+                n.classList.remove(isBack ? 'stwiz--exit' : 'stwiz--enter');
+                o?.classList?.add(isBack ? 'stwiz--enter' : 'stwiz--exit');
+                await delay(page.transition.time + 10);
+                o?.remove();
+                this.dom.page = n;
+            } else { // in-series
+                n.classList.add(isBack ? 'stwiz--exit' : 'stwiz--enter');
+                this.dom.root.append(n);
+                await waitForFrame();
+                o?.classList?.add(isBack ? 'stwiz--enter' : 'stwiz--exit');
+                await delay(page.transition.time / 2);
+                n.classList.remove(isBack ? 'stwiz--exit' : 'stwiz--enter');
+                await delay(page.transition.time / 2 + 10);
+                o?.remove();
+                this.dom.page = n;
+            }
         } else {
             this.dom.root.append(n);
             o?.remove();

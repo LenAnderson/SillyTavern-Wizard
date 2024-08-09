@@ -12,6 +12,7 @@ export class WizardPage {
 
     /**@type {WizardHero} */ hero;
     /**@type {WizardNav} */ nav;
+    /**@type {WizardTransition} */ transition;
     /**@type {WizardCrumbs} */ crumbs;
 
     /**@type {WizardContent[]} */ contentList = [];

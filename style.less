@@ -11,6 +11,7 @@
 }
 .stwiz--root {
 	--blur: 6;
+	--transition: 400;
 
 	&::backdrop {
 		backdrop-filter: blur(calc(var(--blur) * 1px));
@@ -46,29 +47,31 @@
 	}
 
 	&[data-stwiz-transition="fade"] .stwiz--pageContainer, .stwiz--pageContainer {
-		// transition: 200ms;
+		transition: calc(var(--transition) * 1ms);
 		&.stwiz--enter { opacity: 0; }
 		opacity: 1;
 		&.stwiz--exit { opacity: 0; }
 	}
 	&[data-stwiz-transition="slide-horizontal"] .stwiz--pageContainer {
+		transition: calc(var(--transition) * 1ms);
 		&.stwiz--enter { transform: translateX(100%); }
 		transform: translateX(0%);
 		&.stwiz--exit { transform: translateX(-100%); }
 	}
 	&[data-stwiz-transition="slide-vertical"] .stwiz--pageContainer {
+		transition: calc(var(--transition) * 1ms);
 		&.stwiz--enter { transform: translateY(100%); }
 		transform: translateY(0%);
 		&.stwiz--exit { transform: translateY(-100%); }
 	}
 	&[data-stwiz-transition="flip-vertical"] .stwiz--pageContainer {
-		transition: 200ms;
+		transition: calc(var(--transition) / 2 * 1ms);
 		&.stwiz--enter { transform: rotateX(-90deg); }
 		transform: rotateX(0deg);
 		&.stwiz--exit { transform: rotateX(90deg); }
 	}
 	&[data-stwiz-transition="flip-horizontal"] .stwiz--pageContainer {
-		transition: 200ms;
+		transition: calc(var(--transition) / 2 * 1ms);
 		&.stwiz--enter { transform: rotateY(-90deg); }
 		transform: rotateY(0deg);
 		&.stwiz--exit { transform: rotateY(90deg); }
@@ -86,7 +89,6 @@
 	backface-visibility: hidden;
 	height: 100%;
 	overflow: hidden;
-	transition: 400ms;
 	transform-origin: center;
 	width: 100%;
 	&:has(.stwiz--hero) {
