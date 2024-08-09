@@ -23,7 +23,7 @@ export class WizardHero {
 
 
 
-    /**@type {HERO_LAYOUT} */ layout = HERO_LAYOUT.VERTICAL;
+    /**@type {HERO_LAYOUT} */ layout = HERO_LAYOUT.HORIZONTAL;
     /**@type {HERO_POSITION} */ position = HERO_POSITION.START;
     /**@type {number} */ size = 40;
     /**@type {string} */ image;
