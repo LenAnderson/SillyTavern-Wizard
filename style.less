@@ -13,6 +13,7 @@
 	--blur: 6;
 	--transition: 400;
 
+	&:focus-visible { outline: none; }
 	&::backdrop {
 		backdrop-filter: blur(calc(var(--blur) * 1px));
 	}

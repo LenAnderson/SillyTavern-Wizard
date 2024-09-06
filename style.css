@@ -25,6 +25,9 @@
   overflow: hidden;
   padding: 0;
 }
+.stwiz--root:focus-visible {
+  outline: none;
+}
 .stwiz--root::backdrop {
   backdrop-filter: blur(calc(var(--blur) * 1px));
 }
