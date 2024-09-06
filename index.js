@@ -33,7 +33,7 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wizard',
      *  blur:string,
      *  background:string,
      *  first:string,
-     *  class:string,
+     *  classes:string,
      *  linear:string,
      * }} args
      * @param {SlashCommandClosure} contentClosure
@@ -47,8 +47,8 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wizard',
         wiz.blur = Number(args.blur ?? wiz.blur);
         wiz.backgroundImage = args.background;
         wiz.firstPage = args.first;
-        let classList = args.class;
-        try { classList = JSON.parse(args.class ?? '[]'); } catch { /* not JSON */ }
+        let classList = args.classes;
+        try { classList = JSON.parse(args.classes ?? '[]'); } catch { /* not JSON */ }
         wiz.classList = Array.isArray(classList) ? classList : [classList];
         wiz.isLinear = isTrueBoolean(args.linear);
 
@@ -86,7 +86,7 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wizard',
         SlashCommandNamedArgument.fromProps({ name: 'first',
             description: 'ID of the page to show first instead of the first page in order',
         }),
-        SlashCommandNamedArgument.fromProps({ name: 'class',
+        SlashCommandNamedArgument.fromProps({ name: 'classes',
             description: 'a single class or list of classes to add to the Wizard element, for targeting with custom CSS',
             typeList: [ARGUMENT_TYPE.LIST, ARGUMENT_TYPE.STRING],
         }),
@@ -165,7 +165,7 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page',
      *  id:string,
      *  title:string,
      *  icon:string,
-     *  class:string,
+     *  classes:string,
      * }} args
      * @param {SlashCommandClosure} contentClosure
      */
@@ -190,8 +190,8 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page',
         page.nav = WizardNav.from(wiz.nav?.toJSON());
         page.transition = WizardTransition.from(wiz.transition?.toJSON());
         page.crumbs = WizardCrumbs.from(wiz.crumbs?.toJSON());
-        let classList = args.class;
-        try { classList = JSON.parse(args.class ?? '[]'); } catch { /* not JSON */ }
+        let classList = args.classes;
+        try { classList = JSON.parse(args.classes ?? '[]'); } catch { /* not JSON */ }
         page.classList = Array.isArray(classList) ? classList : [classList];
 
         args._scope.variables['_STWIZ_PAGE_'] = page;
@@ -208,7 +208,7 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page',
         SlashCommandNamedArgument.fromProps({ name: 'title',
             description: 'title to be shown at the top of the page',
         }),
-        SlashCommandNamedArgument.fromProps({ name: 'class',
+        SlashCommandNamedArgument.fromProps({ name: 'classes',
             description: 'a single class or list of classes to add to the Wizard element, for targeting with custom CSS',
             typeList: [ARGUMENT_TYPE.LIST, ARGUMENT_TYPE.STRING],
         }),
@@ -284,7 +284,7 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-hero',
      *  image:string,
      *  color:string,
      *  clear:string,
-     *  class:string,
+     *  classes:string,
      * }} args
      * @param {SlashCommandClosure} contentClosure
      */
@@ -305,8 +305,8 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-hero',
         hero.image = args.image ?? page?.hero?.image ?? wiz.hero?.image;
         hero.color = args.color ?? page?.hero?.color ?? wiz.hero?.color;
         hero.text = page?.hero?.text ?? wiz.hero?.text;
-        let classList = args.class;
-        try { classList = JSON.parse(args.class ?? '[]'); } catch { /* not JSON */ }
+        let classList = args.classes;
+        try { classList = JSON.parse(args.classes ?? '[]'); } catch { /* not JSON */ }
         hero.classList = Array.isArray(classList) ? classList : [classList];
 
         args._scope.variables['_STWIZ_HERO_'] = hero;
@@ -339,7 +339,7 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-hero',
             description: 'color to fill the hero panel with (any valid CSS color, google "MDN color")',
             defaultValue: 'transparent',
         }),
-        SlashCommandNamedArgument.fromProps({ name: 'class',
+        SlashCommandNamedArgument.fromProps({ name: 'classes',
             description: 'a single class or list of classes to add to the Hero element, for targeting with custom CSS',
             typeList: [ARGUMENT_TYPE.LIST, ARGUMENT_TYPE.STRING],
         }),
