@@ -46,12 +46,22 @@ export class WizardTextBox extends WizardContent {
                     if (this.placeholder) input.placeholder = this.placeholder;
                     input.value = this.currentValue ?? this.value;
                     input.addEventListener('click', (evt)=>evt.stopPropagation());
+                    let isUpdating = false;
                     input.addEventListener('input', ()=>{
                         this.currentValue = input.value;
                         if (this.varName) {
-                            wizard.variables[this.varName] = input.value;
+                            isUpdating = true;
+                            wizard.setVariable(this.varName, input.value);
+                            isUpdating = false;
                         }
                     });
+                    if (this.varName) {
+                        wizard.onVariable(this.varName, (value)=>{
+                            if (isUpdating) return;
+                            input.value = value;
+                            this.currentValue = value;
+                        });
+                    }
                     (label ?? root).append(input);
                 }
             }

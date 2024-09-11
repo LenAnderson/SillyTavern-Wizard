@@ -54,6 +54,7 @@ export class Wizard {
     /**@type {boolean} */ isActive = false;
     /**@type {Promise<string>} */ promise;
     /**@type {(result:string)=>void} */ resolve;
+    /**@type {{[key:string]:((value:string)=>void)[]}} */ variableListeners = {};
 
 
     // DOM
@@ -108,6 +109,7 @@ export class Wizard {
         } else {
             this.variables[key] = value;
         }
+        this.variableListeners[key]?.forEach(it=>it(value));
         return value;
     }
     getVariable(key, index = null) {
@@ -129,6 +131,12 @@ export class Wizard {
             }
         }
         throw new Error(`No such variable: "${key}"`);
+    }
+    onVariable(key, callback) {
+        if (!this.variableListeners[key]) {
+            this.variableListeners[key] = [];
+        }
+        this.variableListeners[key].push(callback);
     }
 
 

@@ -1,3 +1,4 @@
+import { isTrueBoolean } from '../../../../../utils.js';
 import { Wizard } from '../Wizard.js';
 import { WizardContent } from '../WizardContent.js';
 
@@ -39,9 +40,14 @@ export class WizardCheckbox extends WizardContent {
                     inp.classList.add('stwiz--checkbox');
                     inp.type = 'checkbox';
                     inp.checked = this.checked;
-                    inp.addEventListener('click', ()=>{
+                    let isUpdating = false;
+                    const update = (prop = true)=>{
                         this.checked = inp.checked;
-                        if (this.var !== undefined) wizard.setVariable(this.var, JSON.stringify(this.checked));
+                        if (prop && this.var !== undefined) {
+                            isUpdating = true;
+                            wizard.setVariable(this.var, JSON.stringify(this.checked));
+                            isUpdating = false;
+                        }
                         if (this.group !== undefined) {
                             let group = [];
                             try { group = JSON.parse(wizard.getVariable(this.group)); } catch { /* not JSON */ }
@@ -53,7 +59,15 @@ export class WizardCheckbox extends WizardContent {
                             }
                             wizard.setVariable(this.group, JSON.stringify(group));
                         }
-                    });
+                    };
+                    inp.addEventListener('click', ()=>update());
+                    if (this.var !== undefined) {
+                        wizard.onVariable(this.var, (value)=>{
+                            if (isUpdating) return;
+                            inp.checked = isTrueBoolean(value);
+                            update(false);
+                        });
+                    }
                     root.append(inp);
                 }
                 if (this.icon) {

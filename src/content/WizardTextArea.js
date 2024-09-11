@@ -48,12 +48,22 @@ export class WizardTextArea extends WizardContent {
                     if (this.placeholder) input.style.setProperty('--placeholder', `"${this.placeholder.replace(/"/g, '\\"')}"`);
                     input.textContent = this.currentValue ?? this.value;
                     input.addEventListener('click', (evt)=>evt.stopPropagation());
+                    let isUpdating = false;
                     input.addEventListener('input', ()=>{
                         this.currentValue = input.textContent;
                         if (this.varName) {
-                            wizard.variables[this.varName] = input.textContent;
+                            isUpdating = true;
+                            wizard.setVariable(this.varName, input.textContent);
+                            isUpdating = false;
                         }
                     });
+                    if (this.varName) {
+                        wizard.onVariable(this.varName, (value)=>{
+                            if (isUpdating) return;
+                            input.textContent = value;
+                            this.currentValue = value;
+                        });
+                    }
                     (label ?? root).append(input);
                 }
             }
