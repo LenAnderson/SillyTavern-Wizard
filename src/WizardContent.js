@@ -1,8 +1,17 @@
 import { substituteParams } from '../../../../../script.js';
+import { delay, uuidv4 } from '../../../../utils.js';
 import { Wizard } from './Wizard.js';
 
 export class WizardContent {
     /**@type {object} */ dom;
+    /**@type {string} */ uuid;
+
+
+
+
+    constructor() {
+        this.uuid = uuidv4();
+    }
 
 
 
@@ -32,6 +41,17 @@ export class WizardContent {
     }
 
     unrender() {
-        Object.keys(this.dom).forEach(it=>this.dom[it] = null);
+        Object.keys(this.dom).forEach(it=>{
+            this.dom[it]?.remove();
+            this.dom[it] = null;
+        });
+    }
+
+    async remove() {
+        if (this.dom.root) {
+            this.dom.root.classList.add('stwiz--fadeOut');
+            await delay(1010);
+            this.unrender();
+        }
     }
 }

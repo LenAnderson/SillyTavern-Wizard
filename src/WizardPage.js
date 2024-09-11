@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { SlashCommandClosure } from '../../../../slash-commands/SlashCommandClosure.js';
+import { delay } from '../../../../utils.js';
 import { Wizard } from './Wizard.js';
 import { WizardContent } from './WizardContent.js';
 import { WizardHero } from './WizardHero.js';
@@ -79,5 +80,45 @@ export class WizardPage {
         this.hero?.unrender();
         this.nav?.unrender();
         this.contentList.forEach(it=>it.unrender());
+    }
+
+
+    /**
+     *
+     * @param {Wizard} wizard
+     * @param {WizardContent} content
+     * @param {string} adjacent
+     * @param {'after'|'before'} where
+     */
+    async addContent(wizard, content, adjacent = null, where = null) {
+        where ??= 'after';
+        let anchor;
+        if (adjacent) {
+            anchor = this.contentList.find(it=>it.uuid == adjacent);
+            this.contentList.splice(this.contentList.indexOf(anchor) + (where == 'after' ? 1 : 0), 0, content);
+        } else {
+            this.contentList.push(content);
+        }
+        if (this.dom.page) {
+            const dom = await content.render(wizard);
+            dom.classList.add('stwiz--fadeIn');
+            if (adjacent) {
+                anchor.dom.root.insertAdjacentElement(`${where == 'after' ? 'afterend' : 'beforebegin'}`, dom);
+            } else {
+                this.dom.page.append(dom);
+            }
+            await delay(510);
+            dom.classList.remove('stwiz--fadeIn');
+        }
+    }
+
+    async removeContent(id) {
+        const content = this.contentList.find(it=>it.uuid == id);
+        if (content) {
+            this.contentList.splice(this.contentList.indexOf(content), 1);
+            if (this.dom.page) {
+                await content.remove();
+            }
+        }
     }
 }

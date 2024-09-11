@@ -284,7 +284,8 @@
   flex-direction: column;
   align-items: center;
   height: 100%;
-  overflow: auto;
+  overflow-x: clip;
+  overflow-y: auto;
   padding: 1em;
 }
 .stwiz--content.stwiz--title {
@@ -455,4 +456,27 @@
 }
 .stwiz--content.stwiz--checkbox:hover .stwiz--img {
   opacity: 1;
+}
+.stwiz--content.stwiz--fadeOut {
+  transform-origin: center left;
+  animation: stwiz--popin 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) reverse;
+  animation-fill-mode: forwards;
+}
+.stwiz--content.stwiz--fadeIn {
+  transform-origin: center left;
+  animation: stwiz--popin 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes stwiz--popin {
+  0% {
+    transform: scale(0);
+  }
+  48% {
+    transform: scale(1.2);
+  }
+  80% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }

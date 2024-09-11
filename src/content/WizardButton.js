@@ -1,4 +1,5 @@
 import { SlashCommandClosure } from '../../../../../slash-commands/SlashCommandClosure.js';
+import { SlashCommandScope } from '../../../../../slash-commands/SlashCommandScope.js';
 import { WizardContent } from '../WizardContent.js';
 
 export class WizardButton extends WizardContent {

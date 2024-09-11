@@ -18,6 +18,7 @@ import { WizardCheckbox } from './src/content/WizardCheckbox.js';
 import { NAV_POSITION, WizardNav } from './src/WizardNav.js';
 import { CRUMBS__POSITION, WizardCrumbs } from './src/WizCrumbs.js';
 import { TRANSITION_TYPE, WizardTransition } from './src/WizardTransition.js';
+import { SlashCommandScope } from '../../../slash-commands/SlashCommandScope.js';
 
 // wizard UI
 //x handle Escape closing modal
@@ -566,23 +567,37 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-tit
 SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-text',
     /**
      * @param {import('../../../slash-commands/SlashCommand.js').NamedArguments & {
+     *  adjacent:string,
+     *  where:'after'|'before',
      * }} args
      * @param {string} text
      */
     callback: async(args, text)=>{
+        const wiz = /**@type {Wizard}*/(args._scope.existsVariable('_STWIZ_') && args._scope.getVariable('_STWIZ_'));
         const page = /**@type {WizardPage}*/(args._scope.existsVariable('_STWIZ_PAGE_') && args._scope.getVariable('_STWIZ_PAGE_'));
         if (!page) throw new Error('Cannot call "/wiz-page-text" outside of "/wiz-page"');
 
         const content = new WizardText();
         content.text = text;
 
-        page.contentList.push(content);
+        page.addContent(wiz, content, args.adjacent, args.where);
 
-        return '';
+        return content.uuid;
     },
+    namedArgumentList: [
+        SlashCommandNamedArgument.fromProps({ name: 'adjacent',
+            description: 'content ID of page element to place this adjacent to',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'where',
+            description: 'whether to place before or after adjacent element',
+            enumList: ['after', 'before'],
+            defaultValue: 'after',
+        }),
+    ],
     unnamedArgumentList: [
         SlashCommandArgument.fromProps({ description: 'markdown text' }),
     ],
+    returns: 'content ID',
     helpString: `
         <div>Adds a markdown text to the page.</div>
     `,
@@ -594,10 +609,13 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-tex
      *  label:string,
      *  placeholder:string,
      *  var:string,
+     *  adjacent:string,
+     *  where:'after'|'before',
      * }} args
      * @param {string} value
      */
     callback: async(args, value)=>{
+        const wiz = /**@type {Wizard}*/(args._scope.existsVariable('_STWIZ_') && args._scope.getVariable('_STWIZ_'));
         const page = /**@type {WizardPage}*/(args._scope.existsVariable('_STWIZ_PAGE_') && args._scope.getVariable('_STWIZ_PAGE_'));
         if (!page) throw new Error('Cannot call "/wiz-page-textarea" outside of "/wiz-page"');
 
@@ -607,9 +625,10 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-tex
         content.value = value ?? '';
         content.varName = args.var;
 
-        page.contentList.push(content);
 
-        return '';
+        page.addContent(wiz, content, args.adjacent, args.where);
+
+        return content.uuid;
     },
     namedArgumentList: [
         SlashCommandNamedArgument.fromProps({ name: 'label',
@@ -620,6 +639,14 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-tex
         }),
         SlashCommandNamedArgument.fromProps({ name: 'var',
             description: 'variable name to assign the entered value to, access with {{wizvar::varname}}',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'adjacent',
+            description: 'content ID of page element to place this adjacent to',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'where',
+            description: 'whether to place before or after adjacent element',
+            enumList: ['after', 'before'],
+            defaultValue: 'after',
         }),
     ],
     unnamedArgumentList: [
@@ -636,10 +663,13 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-tex
      *  label:string,
      *  placeholder:string,
      *  var:string,
+     *  adjacent:string,
+     *  where:'after'|'before',
      * }} args
      * @param {string} value
      */
     callback: async(args, value)=>{
+        const wiz = /**@type {Wizard}*/(args._scope.existsVariable('_STWIZ_') && args._scope.getVariable('_STWIZ_'));
         const page = /**@type {WizardPage}*/(args._scope.existsVariable('_STWIZ_PAGE_') && args._scope.getVariable('_STWIZ_PAGE_'));
         if (!page) throw new Error('Cannot call "/wiz-page-textbox" outside of "/wiz-page"');
 
@@ -649,9 +679,10 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-tex
         content.value = value ?? '';
         content.varName = args.var;
 
-        page.contentList.push(content);
 
-        return '';
+        page.addContent(wiz, content, args.adjacent, args.where);
+
+        return content.uuid;
     },
     namedArgumentList: [
         SlashCommandNamedArgument.fromProps({ name: 'label',
@@ -662,6 +693,14 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-tex
         }),
         SlashCommandNamedArgument.fromProps({ name: 'var',
             description: 'variable name to assign the entered value to, access with {{wizvar::varname}}',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'adjacent',
+            description: 'content ID of page element to place this adjacent to',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'where',
+            description: 'whether to place before or after adjacent element',
+            enumList: ['after', 'before'],
+            defaultValue: 'after',
         }),
     ],
     unnamedArgumentList: [
@@ -679,14 +718,23 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-but
      *  icon:string,
      *  image:string,
      *  small:string,
+     *  adjacent:string,
+     *  where:'after'|'before',
      * }} args
      * @param {SlashCommandClosure} callback
      */
     callback: async(args, callback)=>{
+        const wiz = /**@type {Wizard}*/(args._scope.existsVariable('_STWIZ_') && args._scope.getVariable('_STWIZ_'));
         const page = /**@type {WizardPage}*/(args._scope.existsVariable('_STWIZ_PAGE_') && args._scope.getVariable('_STWIZ_PAGE_'));
         if (!page) throw new Error('Cannot call "/wiz-page-button" outside of "/wiz-page"');
 
-        callback?.scope?.letVariable('_STWIZ_PAGE_', page);
+        callback = callback.getCopy();
+        // callback.scope = new SlashCommandScope(args._scope);
+        if (callback?.scope?.existsVariableInScope('_STWIZ_PAGE_')) {
+            callback.scope.setVariable('_STWIZ_PAGE_', page);
+        } else {
+            callback?.scope?.letVariable('_STWIZ_PAGE_', page);
+        }
 
         const content = new WizardButton();
         content.label = args.label;
@@ -695,9 +743,10 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-but
         content.isSmall = isTrueBoolean((args.small ?? 'false') || 'true');
         content.callback = callback;
 
-        page.contentList.push(content);
 
-        return '';
+        page.addContent(wiz, content, args.adjacent, args.where);
+
+        return content.uuid;
     },
     namedArgumentList: [
         SlashCommandNamedArgument.fromProps({ name: 'label',
@@ -713,6 +762,14 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-but
             description: 'add "small=" to show a smaller button',
             typeList: ARGUMENT_TYPE.BOOLEAN,
             defaultValue: 'false',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'adjacent',
+            description: 'content ID of page element to place this adjacent to',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'where',
+            description: 'whether to place before or after adjacent element',
+            enumList: ['after', 'before'],
+            defaultValue: 'after',
         }),
     ],
     unnamedArgumentList: [
@@ -737,6 +794,8 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-che
      *  var:string,
      *  group:string,
      *  checked:string,
+     *  adjacent:string,
+     *  where:'after'|'before',
      * }} args
      * @param {SlashCommandClosure} callback
      */
@@ -745,7 +804,11 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-che
         const page = /**@type {WizardPage}*/(args._scope.existsVariable('_STWIZ_PAGE_') && args._scope.getVariable('_STWIZ_PAGE_'));
         if (!page) throw new Error('Cannot call "/wiz-page-checkbox" outside of "/wiz-page"');
 
-        callback?.scope?.letVariable('_STWIZ_PAGE_', page);
+        if (callback?.scope?.existsVariableInScope('_STWIZ_PAGE_')) {
+            callback.scope.setVariable('_STWIZ_PAGE_', page);
+        } else {
+            callback?.scope?.letVariable('_STWIZ_PAGE_', page);
+        }
 
         const content = new WizardCheckbox();
         content.label = args.label;
@@ -768,9 +831,10 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-che
             wiz.setVariable(content.group, JSON.stringify(group));
         }
 
-        page.contentList.push(content);
 
-        return '';
+        page.addContent(wiz, content, args.adjacent, args.where);
+
+        return content.uuid;
     },
     namedArgumentList: [
         SlashCommandNamedArgument.fromProps({ name: 'label',
@@ -802,6 +866,14 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-che
             description: 'add "checked=" to start the checkbox already checked',
             typeList: ARGUMENT_TYPE.BOOLEAN,
             defaultValue: 'false',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'adjacent',
+            description: 'content ID of page element to place this adjacent to',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'where',
+            description: 'whether to place before or after adjacent element',
+            enumList: ['after', 'before'],
+            defaultValue: 'after',
         }),
     ],
     helpString: `
@@ -1002,5 +1074,30 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-cmd-prev
     },
     helpString: `
         <div>Go to the previous page.</div>
+    `,
+}));
+
+SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-cmd-remove',
+    /**
+     * @param {import('../../../slash-commands/SlashCommand.js').NamedArguments & {
+     * }} args
+     * @param {string} value
+     */
+    callback: (args, value)=>{
+        const wiz = /**@type {Wizard}*/(args._scope.existsVariable('_STWIZ_') && args._scope.getVariable('_STWIZ_'));
+        const page = /**@type {WizardPage}*/(args._scope.existsVariable('_STWIZ_PAGE_') && args._scope.getVariable('_STWIZ_PAGE_'));
+        if (!page) throw new Error('Cannot call "/wiz-cmd-remove" outside of "/wiz-page"');
+
+        page.removeContent(value);
+
+        return '';
+    },
+    unnamedArgumentList: [
+        SlashCommandArgument.fromProps({ description: 'content ID',
+            isRequired: true,
+        }),
+    ],
+    helpString: `
+        <div>Remove content from a page.</div>
     `,
 }));
