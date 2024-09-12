@@ -567,6 +567,7 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-tit
 SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-text',
     /**
      * @param {import('../../../slash-commands/SlashCommand.js').NamedArguments & {
+     *  var:string,
      *  adjacent:string,
      *  where:'after'|'before',
      * }} args
@@ -579,12 +580,16 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-tex
 
         const content = new WizardText();
         content.text = text;
+        content.varName = args.var;
 
         page.addContent(wiz, content, args.adjacent, args.where);
 
         return content.uuid;
     },
     namedArgumentList: [
+        SlashCommandNamedArgument.fromProps({ name: 'var',
+            description: 'variable name for dynamic content',
+        }),
         SlashCommandNamedArgument.fromProps({ name: 'adjacent',
             description: 'content ID of page element to place this adjacent to',
         }),
