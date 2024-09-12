@@ -41,7 +41,7 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wizard',
      */
     callback: async(args, contentClosure)=>{
         if (!contentClosure) throw new Error('/wizard requires the unnamed argument to be set');
-        const wiz = new Wizard();
+        const wiz = new Wizard(args._scope);
 
         wiz.size = Object.values(WIZARD_SIZE).find(it=>it == args.size) ?? wiz.size;
         wiz.title = args.title;

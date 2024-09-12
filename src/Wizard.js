@@ -1,6 +1,7 @@
 /** @readonly */
 
 import { SlashCommandClosure } from '../../../../slash-commands/SlashCommandClosure.js';
+import { SlashCommandScope } from '../../../../slash-commands/SlashCommandScope.js';
 import { delay } from '../../../../utils.js';
 import { waitForFrame } from './lib/wait.js';
 import { WizardHero } from './WizardHero.js';
@@ -17,6 +18,8 @@ export const WIZARD_SIZE = {
 
 
 export class Wizard {
+    /**@type {SlashCommandScope} */ scope;
+
     // wizard's own
     /**@type {string} */ title;
     /**@type {WIZARD_SIZE} */ size = WIZARD_SIZE.INSET;
@@ -70,6 +73,15 @@ export class Wizard {
 
 
 
+    /**
+     *
+     * @param {SlashCommandScope} scope
+     */
+    constructor(scope) {
+        this.scope = scope;
+        this.scope.setMacro('wizvar::*', '');
+    }
+
     toString() {
         return `Wizard${JSON.stringify({
             title: this.title,
@@ -110,6 +122,7 @@ export class Wizard {
             this.variables[key] = value;
         }
         this.variableListeners[key]?.forEach(it=>it(value));
+        this.scope.setMacro(`wizvar::${key}`, this.variables[key], true);
         return value;
     }
     getVariable(key, index = null, fallback = null) {
