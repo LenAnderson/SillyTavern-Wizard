@@ -56,6 +56,7 @@ export class WizardTextBox extends WizardContent {
                         }
                     });
                     if (this.varName) {
+                        input.value = wizard.getVariable(this.varName, null, input.value);
                         wizard.onVariable(this.varName, (value)=>{
                             if (isUpdating) return;
                             input.value = value;

@@ -58,6 +58,7 @@ export class WizardTextArea extends WizardContent {
                         }
                     });
                     if (this.varName) {
+                        input.textContent = wizard.getVariable(this.varName, null, input.textContent);
                         wizard.onVariable(this.varName, (value)=>{
                             if (isUpdating) return;
                             input.textContent = value;
