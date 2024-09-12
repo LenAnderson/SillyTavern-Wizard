@@ -112,7 +112,7 @@ export class Wizard {
         this.variableListeners[key]?.forEach(it=>it(value));
         return value;
     }
-    getVariable(key, index = null) {
+    getVariable(key, index = null, fallback = null) {
         if (this.variables[key] !== undefined) {
             if (index !== null && index !== undefined) {
                 let v = this.variables[key];
@@ -130,7 +130,11 @@ export class Wizard {
                 return ((value?.trim?.() === '' || isNaN(Number(value))) ? (value || '') : Number(value)).toString();
             }
         }
-        throw new Error(`No such variable: "${key}"`);
+        if (fallback === null) {
+            throw new Error(`No such variable: "${key}"`);
+        } else {
+            return fallback;
+        }
     }
     onVariable(key, callback) {
         if (!this.variableListeners[key]) {
