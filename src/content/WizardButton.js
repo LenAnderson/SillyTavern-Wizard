@@ -8,6 +8,7 @@ export class WizardButton extends WizardContent {
     /**@type {string} */ image;
     /**@type {boolean} */ isSmall;
     /**@type {SlashCommandClosure} */ callback;
+    /**@type {string} */ style;
 
 
     // DOM
@@ -35,6 +36,9 @@ export class WizardButton extends WizardContent {
                         i.classList.add(this.icon);
                         root.append(i);
                     }
+                }
+                if (this.style?.trim()?.length) {
+                    root.setAttribute('style', this.style);
                 }
                 const lbl = document.createElement('span'); {
                     lbl.classList.add('stwiz--label');

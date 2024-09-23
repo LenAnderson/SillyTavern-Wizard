@@ -725,6 +725,7 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-but
      *  small:string,
      *  adjacent:string,
      *  where:'after'|'before',
+     *  style:string,
      * }} args
      * @param {SlashCommandClosure} callback
      */
@@ -747,6 +748,7 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-but
         content.image = args.image;
         content.isSmall = isTrueBoolean((args.small ?? 'false') || 'true');
         content.callback = callback;
+        content.style = args.style;
 
 
         page.addContent(wiz, content, args.adjacent, args.where);
@@ -762,6 +764,9 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-but
         }),
         SlashCommandNamedArgument.fromProps({ name: 'image',
             description: 'image to show on the button',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'style',
+            description: 'CSS style declarations to apply to the button',
         }),
         SlashCommandNamedArgument.fromProps({ name: 'small',
             description: 'add "small=" to show a smaller button',
