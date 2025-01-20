@@ -15,6 +15,7 @@ import { HERO_TEXT_POSITION, WizardHeroText } from './src/WizardHeroText.js';
 import { isFalseBoolean, isTrueBoolean } from '../../../utils.js';
 import { WizardButton } from './src/content/WizardButton.js';
 import { WizardCheckbox } from './src/content/WizardCheckbox.js';
+import { WizardSelect } from './src/content/WizardSelect.js';
 import { NAV_POSITION, WizardNav } from './src/WizardNav.js';
 import { CRUMBS__POSITION, WizardCrumbs } from './src/WizCrumbs.js';
 import { TRANSITION_TYPE, WizardTransition } from './src/WizardTransition.js';
@@ -891,6 +892,58 @@ SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-che
     `,
 }));
 
+SlashCommandParser.addCommandObject(SlashCommand.fromProps({ name: 'wiz-page-select',
+    /**
+     * @param {import('../../../slash-commands/SlashCommand.js').NamedArguments & {
+     *  label:string,
+     *  var:string,
+     *  selected:string,
+     * }} args
+     * @param {string} options
+     */
+    callback: async(args, options)=>{
+        const wiz = /**@type {Wizard}*/(args._scope.existsVariable('_STWIZ_') && args._scope.getVariable('_STWIZ_'));
+        const page = /**@type {WizardPage}*/(args._scope.existsVariable('_STWIZ_PAGE_') && args._scope.getVariable('_STWIZ_PAGE_'));
+        if (!page) throw new Error('Cannot call "/wiz-page-select" outside of "/wiz-page"');
+
+        const content = new WizardSelect();
+        content.label = args.label;
+        content.var = args.var;
+        content.selected = args.selected;
+
+        content.options = options.split(',').map(opt => {
+            const [value, label] = opt.trim().split('::');
+            return {
+                value: value?.trim(),
+                label: label.trim() ?? value.trim(),
+            };
+        });
+
+        page.addContent(wiz, content);
+
+        return content.uuid;
+    },
+    namedArgumentList: [
+        SlashCommandNamedArgument.fromProps({ name: 'label',
+            description: 'label text to show above the select',
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'var',
+            description: 'variable name to assign the selected value to, access with {{wizvar::varname}}',
+            typeList: ARGUMENT_TYPE.VARIABLE_NAME,
+        }),
+        SlashCommandNamedArgument.fromProps({ name: 'selected',
+            description: 'initially selected option value',
+        }),
+    ],
+    unnamedArgumentList: [
+        SlashCommandArgument.fromProps({ description: 'comma-separated list of options in format "value::label"',
+            isRequired: true,
+        }),
+    ],
+    helpString: `
+        <div>Adds a dropdown select input to the page.</div>
+    `,
+}));
 
 
 
