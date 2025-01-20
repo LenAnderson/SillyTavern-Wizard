@@ -7,7 +7,7 @@ Adds STscript commands to show a configurable Wizard to guide the user step-by-s
 |![](./README/wiz-20.jpg)|![](./README/wiz-21.jpg)|![](./README/wiz-22.jpg)|
 |![](./README/wiz-23.jpg)|![](./README/wiz-24.jpg)|![](./README/wiz-25.jpg)|
 |![](./README/wiz-26.jpg)|![](./README/wiz-27.jpg)|![](./README/wiz-28.jpg)|
-|![](./README/wiz-29.jpg)|![](./README/wiz-30.jpg)| |
+|![](./README/wiz-29.jpg)|![](./README/wiz-30.jpg)|![](./README/wiz-31.jpg)|
 
 
 
@@ -59,6 +59,11 @@ All features are optional and can be enabled / disabled / configured to your lik
 	- Label text
 	- Placeholder text
 	- Bind to variable
+- Select dropdown
+	- Label text
+	- Options with value and label
+	- Bind to variable
+	- Pre-select option
 - Checkboxes
 	- Large, small
 	- Text
