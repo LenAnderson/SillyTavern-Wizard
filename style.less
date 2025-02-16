@@ -46,6 +46,14 @@
 		width: 100%;
 		max-width: unset;
 	}
+	&[data-stwiz-size="panel"] {
+        --width: calc(((100vw - var(--sheldWidth)) / 2) - 2px);
+        bottom: 0;
+		position: absolute;
+        right: 0;
+        top: 0;
+        width: var(--width);
+	}
 
 	&[data-stwiz-transition="fade"] .stwiz--pageContainer, .stwiz--pageContainer {
 		transition: calc(var(--transition) * 1ms);

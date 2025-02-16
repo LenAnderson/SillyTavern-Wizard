@@ -14,6 +14,7 @@ import { WizardCrumbs } from './WizCrumbs.js';
 export const WIZARD_SIZE = {
     FULL: 'full',
     INSET: 'inset',
+    PANEL: 'panel',
 };
 
 
@@ -170,7 +171,11 @@ export class Wizard {
         await this.next();
         const result = await this.promise;
         this.isActive = false;
-        dom.close();
+        if (this.size == WIZARD_SIZE.PANEL) {
+            dom.remove();
+        } else {
+            dom.close();
+        }
         Object.keys(this.dom).forEach(key=>this.dom[key]?.remove());
         this.dom.root = null;
         if (this.after) {
@@ -240,7 +245,24 @@ export class Wizard {
         this.showPage(page);
     }
 
+    async renderPanel() {
+        if (!this.dom.root) {
+            const root = document.createElement('div'); {
+                this.dom.root = root;
+                root.classList.add('stwiz--root');
+                root.dataset.stwizSize = this.size;
+                for (const c of this.classList) root.classList.add(c);
+                if (this.backgroundColor) root.style.backgroundColor = this.backgroundColor;
+                document.body.append(root);
+            }
+        }
+        return this.dom.root;
+    }
+
     async render() {
+        if (this.size == WIZARD_SIZE.PANEL) {
+            return await this.renderPanel();
+        }
         if (!this.dom.root) {
             if (this.backgroundImage) {
                 const bg = document.createElement('dialog'); {
