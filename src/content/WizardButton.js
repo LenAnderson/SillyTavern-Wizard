@@ -55,7 +55,7 @@ export class WizardButton extends WizardContent {
                             lbl.append(img);
                         }
                     }
-                    lbl.append(this.label);
+                    lbl.append(this.label ?? '');
                     root.append(lbl);
                 }
                 root.addEventListener('click', async(evt)=>{
